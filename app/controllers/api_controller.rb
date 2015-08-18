@@ -1,14 +1,23 @@
 class ApiController < ApplicationController
-  ORIGIN = ActiveShipping::Location.new(
-    country: 'US',
-    state: 'WA',
-    city: 'Seattle',
-    zip: '98101'
-    )
-
   def get_ups_rates
     ups = UpsInterface.new.ups
+    shipment = JSON.parse(params[:shipment])
+    raw_packages = shipment["packages"]
 
-    ups.find_rates(ORIGIN, destination, packages)
+    binding.pry
+    packages = []
+    raw_packages.each do |package|
+      new_package = ActiveShipping::Package.new(
+        package["weight"], package["dimensions"])
+      packages << new_package
+    end
+
+    origin = ActiveShipping::Location.new(shipment["origin"])
+
+    destination = ActiveShipping::Location.new(shipment["destination"])
+
+    response = ups.find_rates(origin, destination, packages)
+
+    render json: response
   end
 end
