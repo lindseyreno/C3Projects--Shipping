@@ -19,3 +19,4 @@
 
 # Ignore .env
 .env
+spec/support/vcr_cassettes
