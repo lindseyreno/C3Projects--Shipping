@@ -1,4 +1,5 @@
 require 'ups_interface'
+require 'usps_interface'
 
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
