@@ -84,10 +84,9 @@ RSpec.describe ApiController, type: :controller do
         expect(service_names).to eq ApiController::DESIRED_USPS_RATES
       end
 
-      ### USPS price is inside packages
-      # it "returns rates in ascending order of price" do
-      #   expect(@rates.first["total_price"]).to be <= @rates.last["total_price"]
-      # end
+      it "returns rates in ascending order of price" do
+        expect(@rates.first["total_price"]).to be <= @rates.last["total_price"]
+      end
     end
   end
 end
