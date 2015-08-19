@@ -37,6 +37,10 @@ RSpec.describe ApiController, type: :controller do
         end
         expect(sorted_rates.first.first).to eq "UPS Ground"
       end
+
+      it "returns only the three desired rates" do
+        expect(@rates.count).to eq 3
+      end
     end
   end
 
