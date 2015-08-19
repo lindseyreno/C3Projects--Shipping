@@ -9,7 +9,7 @@ RSpec.describe ApiController, type: :controller do
   describe "GET #get_ups_rates" do
     before :each do
       VCR.use_cassette "controllers/get_ups_rates" do
-        get :get_ups_rates, shipment: shipment
+        get :get_ups_rates, q: shipment
         @rates = JSON.parse response.body
       end
     end
@@ -45,7 +45,7 @@ RSpec.describe ApiController, type: :controller do
   describe "GET #get_usps_rates" do
     before :each do
       VCR.use_cassette "controllers/get_usps_rates" do
-        get :get_usps_rates, shipment: shipment
+        get :get_usps_rates, q: shipment
         @rates = JSON.parse response.body
       end
     end
@@ -81,7 +81,7 @@ RSpec.describe ApiController, type: :controller do
   describe "GET #get_all_rates" do
     let(:api_call) do
       VCR.use_cassette "controllers/get_all_rates" do
-        get :get_all_rates, shipment: shipment
+        get :get_all_rates, q: shipment
         @rates = JSON.parse response.body
       end
     end
