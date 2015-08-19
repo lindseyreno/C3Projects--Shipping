@@ -1,6 +1,6 @@
 class ApiController < ApplicationController
   DESIRED_UPS_RATES = ["UPS Ground", "UPS Second Day Air", "UPS Next Day Air"]
-  DESIRED_USPS_RATES = ["USPS First-Class Mail Parcel", "USPS Priority Mail Express 1-Day"]
+  DESIRED_USPS_RATES = ["USPS First-Class Mail Parcel", "USPS Priority Mail 1-Day"]
 
   def get_ups_rates
     ups = UpsInterface.new.ups
@@ -40,8 +40,8 @@ class ApiController < ApplicationController
     ## pull out just the service_name and calculate the total rate
     rate_price_pairs = []
     collected_rates.each do |rate|
-      rate_price_pairs << { 
-        service_name: rate.service_name, total_price: rate.total_price 
+      rate_price_pairs << {
+        service_name: rate.service_name, total_price: rate.total_price
       }
     end
 
@@ -90,8 +90,8 @@ class ApiController < ApplicationController
       rate.package_rates.each do |package_rate|
         collected_prices += package_rate[:rate]
       end
-      rate_price_pairs << { 
-        service_name: rate.service_name, total_price: collected_prices 
+      rate_price_pairs << {
+        service_name: rate.service_name, total_price: collected_prices
       }
     end
 
