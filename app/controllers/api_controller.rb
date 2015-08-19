@@ -73,6 +73,17 @@ class ApiController < ApplicationController
       collected_rates << rate if DESIRED_USPS_RATES.include?(rate.service_name)
     end
 
-    render json: collected_rates
+    rate_price_pairs = []
+    collected_rates.each do |rate|
+      collected_prices = 0
+      rate.package_rates.each do |package_rate|
+        collected_prices += package_rate[:rate]
+      end
+      rate_price_pairs << { 
+        service_name: rate.service_name, total_price: collected_prices 
+      }
+    end
+
+    render json: rate_price_pairs
   end
 end
