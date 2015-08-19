@@ -50,6 +50,7 @@ class UpsInterface
         service_name: rate.service_name, total_price: rate.total_price
       }
     end
+    return rate_price_pairs
   end
 end
 
