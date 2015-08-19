@@ -31,15 +31,17 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      it "returns multiple rates" do
-        sorted_rates = @rates.sort_by {|rate| rate["total_price"]}.collect do |rate|
-          [rate["service_name"], rate["total_price"]]
-        end
-        expect(sorted_rates.first.first).to eq "UPS Ground"
+      it "returns only three rates" do
+        expect(@rates.count).to eq 3
       end
 
-      it "returns only the three desired rates" do
-        expect(@rates.count).to eq 3
+      it "returns the three desired rates" do
+        service_names = @rates.collect{ |rate| rate["service_name"] }       
+        expect(service_names).to eq ApiController::DESIRED_RATES
+      end
+
+      it "returns rates in ascending order of price" do
+        expect(@rates.first["total_price"]).to be <= @rates.last["total_price"]
       end
     end
   end
