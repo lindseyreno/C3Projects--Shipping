@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'support/vcr_setup'
+require 'ups_interface'
 
 RSpec.describe ApiController, type: :controller do
   let(:shipment) {
@@ -26,13 +27,13 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      it "returns only #{ApiController::DESIRED_UPS_RATES.count} rates" do
-        expect(@rates.count).to eq ApiController::DESIRED_UPS_RATES.count
+      it "returns only #{UpsInterface::DESIRED_UPS_RATES.count} rates" do
+        expect(@rates.count).to eq UpsInterface::DESIRED_UPS_RATES.count
       end
 
-      it "returns the #{ApiController::DESIRED_UPS_RATES.count} desired rates" do
+      it "returns the #{UpsInterface::DESIRED_UPS_RATES.count} desired rates" do
         service_names = @rates.collect{ |rate| rate["service_name"] }
-        expect(service_names).to eq ApiController::DESIRED_UPS_RATES
+        expect(service_names).to eq UpsInterface::DESIRED_UPS_RATES
       end
 
       it "returns rates in ascending order of price" do
@@ -98,7 +99,7 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      all_rates = ApiController::DESIRED_UPS_RATES + ApiController::DESIRED_USPS_RATES
+      all_rates = UpsInterface::DESIRED_UPS_RATES + ApiController::DESIRED_USPS_RATES
       it "returns #{all_rates.count} rates" do
         expect(@rates.count).to eq all_rates.count
       end
