@@ -31,13 +31,13 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      it "returns only three rates" do
-        expect(@rates.count).to eq 3
+      it "returns only #{ApiController::DESIRED_UPS_RATES.count} rates" do
+        expect(@rates.count).to eq ApiController::DESIRED_UPS_RATES.count
       end
 
-      it "returns the three desired rates" do
+      it "returns the #{ApiController::DESIRED_UPS_RATES.count} desired rates" do
         service_names = @rates.collect{ |rate| rate["service_name"] }       
-        expect(service_names).to eq ApiController::DESIRED_RATES
+        expect(service_names).to eq ApiController::DESIRED_UPS_RATES
       end
 
       it "returns rates in ascending order of price" do
@@ -74,10 +74,20 @@ RSpec.describe ApiController, type: :controller do
       it "is an array" do
         expect(@rates).to be_an_instance_of Array
       end
-    
-      it "returns multiple rates" do
-        expect(@rates.length).to be > 1
+
+      it "returns only #{ApiController::DESIRED_USPS_RATES.count} rates" do
+        expect(@rates.count).to eq ApiController::DESIRED_USPS_RATES.count
       end
+
+      it "returns the #{ApiController::DESIRED_USPS_RATES.count} desired rates" do
+        service_names = @rates.collect{ |rate| rate["service_name"] }       
+        expect(service_names).to eq ApiController::DESIRED_USPS_RATES
+      end
+
+      ### USPS price is inside packages
+      # it "returns rates in ascending order of price" do
+      #   expect(@rates.first["total_price"]).to be <= @rates.last["total_price"]
+      # end
     end
   end
 end
