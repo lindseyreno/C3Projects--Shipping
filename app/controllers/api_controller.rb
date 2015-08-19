@@ -1,5 +1,6 @@
 class ApiController < ApplicationController
-  DESIRED_RATES = ["UPS Ground", "UPS Second Day Air", "UPS Next Day Air"]
+  DESIRED_UPS_RATES = ["UPS Ground", "UPS Second Day Air", "UPS Next Day Air"]
+  DESIRED_USPS_RATES = ["USPS First-Class Mail Parcel", "USPS Priority Mail Express 1-Day"]
 
   def get_ups_rates
     ups = UpsInterface.new.ups
@@ -32,7 +33,7 @@ class ApiController < ApplicationController
 
     collected_rates = []
     rates.each do |rate|
-      collected_rates << rate if DESIRED_RATES.include?(rate.service_name)
+      collected_rates << rate if DESIRED_UPS_RATES.include?(rate.service_name)
     end
 
     render json: collected_rates
@@ -67,6 +68,11 @@ class ApiController < ApplicationController
     response = usps.find_rates(origin, destination, packages)
     rates = response.rates
 
-    render json: rates
+    collected_rates = []
+    rates.each do |rate|
+      collected_rates << rate if DESIRED_USPS_RATES.include?(rate.service_name)
+    end
+
+    render json: collected_rates
   end
 end
