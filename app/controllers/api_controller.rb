@@ -1,4 +1,6 @@
 class ApiController < ApplicationController
+  DESIRED_RATES = ["UPS Ground", "UPS Second Day Air", "UPS Next Day Air"]
+
   def get_ups_rates
     ups = UpsInterface.new.ups
     shipment = JSON.parse(params[:shipment])["shipment"]
@@ -28,7 +30,12 @@ class ApiController < ApplicationController
     response = ups.find_rates(origin, destination, packages)
     rates = response.rates
 
-    render json: rates
+    collected_rates = []
+    rates.each do |rate|
+      collected_rates << rate if DESIRED_RATES.include?(rate.service_name)
+    end
+
+    render json: collected_rates
   end
 
   def get_usps_rates
