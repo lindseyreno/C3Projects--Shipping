@@ -31,12 +31,21 @@ class ApiController < ApplicationController
     response = ups.find_rates(origin, destination, packages)
     rates = response.rates
 
+    ## return only the desired rates
     collected_rates = []
     rates.each do |rate|
       collected_rates << rate if DESIRED_UPS_RATES.include?(rate.service_name)
     end
 
-    render json: collected_rates
+    ## pull out just the service_name and calculate the total rate
+    rate_price_pairs = []
+    collected_rates.each do |rate|
+      rate_price_pairs << { 
+        service_name: rate.service_name, total_price: rate.total_price 
+      }
+    end
+
+    render json: rate_price_pairs
   end
 
   def get_usps_rates
@@ -68,11 +77,13 @@ class ApiController < ApplicationController
     response = usps.find_rates(origin, destination, packages)
     rates = response.rates
 
+    ## collect only the desired service rates
     collected_rates = []
     rates.each do |rate|
       collected_rates << rate if DESIRED_USPS_RATES.include?(rate.service_name)
     end
 
+    ## pull out just the service_name and calculate the total rate
     rate_price_pairs = []
     collected_rates.each do |rate|
       collected_prices = 0
