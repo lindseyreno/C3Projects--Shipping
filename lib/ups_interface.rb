@@ -9,3 +9,12 @@ class UpsInterface
       )
   end
 end
+
+### All the service_names
+
+# ["UPS Ground",
+#  "UPS Three-Day Select",
+#  "UPS Second Day Air",
+#  "UPS Next Day Air Saver",
+#  "UPS Next Day Air Early A.M.",
+#  "UPS Next Day Air"]
