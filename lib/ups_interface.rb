@@ -10,7 +10,7 @@ class UpsInterface
       )
   end
 
-  def process_ups_rates(shipment)
+  def process_rates(shipment)
     raw_packages = shipment["packages"]
 
     packages = []

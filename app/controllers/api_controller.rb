@@ -4,7 +4,7 @@ class ApiController < ApplicationController
   def get_ups_rates
     shipment = JSON.parse(params[:shipment])["shipment"]
     ups = UpsInterface.new
-    rate_price_pairs = ups.process_ups_rates(shipment)
+    rate_price_pairs = ups.process_rates(shipment)
 
     render json: rate_price_pairs
   end
@@ -60,10 +60,11 @@ class ApiController < ApplicationController
   end
 
   def get_all_rates
-    ups_rates = get_ups_rates
-    usps_rates = get_usps_rates
-    all_rates = ups_rates + usps_rates
+    shipment = JSON.parse(params[:shipment])["shipment"]
+    ups_rates = UpsInterface.new.process_rates(shipment)
+    # usps_rates = get_usps_rates
+    # all_rates = ups_rates + usps_rates
 
-    render json: all_rates
+    render json: ups_rates
   end
 end
