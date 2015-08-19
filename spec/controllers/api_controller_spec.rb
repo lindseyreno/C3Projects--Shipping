@@ -70,12 +70,9 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
     
-      # it "returns multiple rates" do
-      #   sorted_rates = @rates.sort_by {|rate| rate["total_price"]}.collect do |rate|
-      #     [rate["service_name"], rate["total_price"]]
-      #   end
-      #   expect(sorted_rates.first.first).to eq "UPS Ground"
-      # end
+      it "returns multiple rates" do
+        expect(@rates.length).to be > 1
+      end
     end
   end
 end
