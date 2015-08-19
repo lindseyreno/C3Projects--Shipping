@@ -63,13 +63,13 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      it "returns only #{ApiController::DESIRED_USPS_RATES.count} rates" do
-        expect(@rates.count).to eq ApiController::DESIRED_USPS_RATES.count
+      it "returns only #{UspsInterface::DESIRED_USPS_RATES.count} rates" do
+        expect(@rates.count).to eq UspsInterface::DESIRED_USPS_RATES.count
       end
 
-      it "returns the #{ApiController::DESIRED_USPS_RATES.count} desired rates" do
+      it "returns the #{UspsInterface::DESIRED_USPS_RATES.count} desired rates" do
         service_names = @rates.collect{ |rate| rate["service_name"] }
-        expect(service_names).to eq ApiController::DESIRED_USPS_RATES
+        expect(service_names).to eq UspsInterface::DESIRED_USPS_RATES
       end
 
       it "returns rates in ascending order of price" do
@@ -79,7 +79,7 @@ RSpec.describe ApiController, type: :controller do
   end
 
   describe "GET #get_all_rates" do
-    before :each do
+    let(:api_call) do
       VCR.use_cassette "controllers/get_all_rates" do
         get :get_all_rates, shipment: shipment
         @rates = JSON.parse response.body
@@ -87,20 +87,24 @@ RSpec.describe ApiController, type: :controller do
     end
 
     it "is successful" do
+      api_call
       expect(response.response_code).to eq 200
     end
 
     it "returns JSON" do
+      api_call
       expect(response.header['Content-Type']).to include 'application/json'
     end
 
     context "the returned JSON object" do
       it "is an array" do
+        api_call
         expect(@rates).to be_an_instance_of Array
       end
 
-      all_rates = UpsInterface::DESIRED_UPS_RATES + ApiController::DESIRED_USPS_RATES
+      all_rates = UpsInterface::DESIRED_UPS_RATES + UspsInterface::DESIRED_USPS_RATES
       it "returns #{all_rates.count} rates" do
+        api_call
         expect(@rates.count).to eq all_rates.count
       end
     end
