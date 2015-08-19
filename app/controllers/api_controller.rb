@@ -1,5 +1,3 @@
-require 'active_shipping'
-
 class ApiController < ApplicationController
   def get_ups_rates
     ups = UpsInterface.new.ups
@@ -28,8 +26,9 @@ class ApiController < ApplicationController
       )
 
     response = ups.find_rates(origin, destination, packages)
+    rates = response.rates
 
-    render json: response
+    render json: rates
   end
 
   def get_usps_rates
@@ -59,7 +58,8 @@ class ApiController < ApplicationController
       )
 
     response = usps.find_rates(origin, destination, packages)
+    rates = response.rates
 
-    render json: response
+    render json: rates
   end
 end
