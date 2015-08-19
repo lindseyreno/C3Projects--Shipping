@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'support/vcr_setup'
-require 'active_shipping'
 
 RSpec.describe ApiController, type: :controller do
   describe "GET #get_ups_rates" do
