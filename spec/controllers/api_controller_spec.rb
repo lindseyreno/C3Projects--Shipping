@@ -110,6 +110,11 @@ RSpec.describe ApiController, type: :controller do
         api_call
         expect(@rates.count).to eq all_rates.count
       end
+
+      it "includes service name, total price and delivery date" do
+        api_call
+        expect(@rates.first.keys).to eq ["service_name", "total_price", "delivery_date"]
+      end
     end
   end
 end
