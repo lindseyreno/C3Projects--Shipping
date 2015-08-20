@@ -38,8 +38,6 @@ class ApiController < ApplicationController
       render json: Audit.find(audit.id), status: 201
     elsif audit.errors
       render json: BAD_PARAM_ERROR_MESSAGE, status: 422
-    else
-      render json: {}, status: 400
     end
   end
 end
