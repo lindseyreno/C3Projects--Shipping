@@ -1,6 +1,6 @@
 class UspsInterface
   attr_reader :usps
-  DESIRED_USPS_RATES = ["USPS First-Class Mail Parcel", "USPS Priority Mail 1-Day"]
+  DESIRED_SERVICES = ["USPS First-Class Mail Parcel", "USPS Priority Mail 1-Day"]
 
   def initialize
     @usps = ActiveShipping::USPS.new(
@@ -38,7 +38,7 @@ class UspsInterface
     ## collect only the desired service rates
     collected_rates = []
     rates.each do |rate|
-      collected_rates << rate if DESIRED_USPS_RATES.include?(rate.service_name)
+      collected_rates << rate if DESIRED_SERVICES.include?(rate.service_name)
     end
 
     ## pull out just the service_name and calculate the total rate
