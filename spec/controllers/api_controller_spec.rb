@@ -119,9 +119,8 @@ RSpec.describe ApiController, type: :controller do
         "{\"shipping_choice\":{\"shipping_service\":\"UPS Ground\",\"shipping_cost\":1000,\"order_id\":1}}"
       }
       before :each do
-        VCR.use_cassette "controllers/api_controller/valid_log_shipping_choice" do
-          post :log_shipping_choice, json_data: valid_shipping_choice
-        end
+        post :log_shipping_choice, json_data: valid_shipping_choice
+        @audit_record = JSON.parse response.body
       end
 
       it "is successful" do
@@ -135,6 +134,11 @@ RSpec.describe ApiController, type: :controller do
       it "creates an audit log record" do
         expect(Audit.count).to eq 1
       end
+
+      it "returns a JSON object of the new Audit record" do
+        binding.pry
+        expect(@audit_record).to be_an_instance_of Hash
+      end
     end
 
     context "invalid shipping choice" do
@@ -142,13 +146,20 @@ RSpec.describe ApiController, type: :controller do
         "{\"shipping_choice\":{\"shipping_service\":\"UPS Ground\",\"shipping_cost\":null,\"order_id\":1}}"
       }
       before :each do
-        VCR.use_cassette "controllers/api_controller/invalid_log_shipping_choice" do
-          post :log_shipping_choice, json_data: invalid_shipping_choice
-        end
+        post :log_shipping_choice, json_data: invalid_shipping_choice
+        @error_message = JSON.parse response.body
       end
 
       it "is responds with 422 Unprocessable Entity" do
         expect(response.response_code).to eq 422
+      end
+
+      it "does not create an Audit log record" do
+        expect(Audit.count).to eq 0
+      end
+
+      it "returns an error message" do
+        expect(@error_message).to be_an_instance_of Hash
       end
     end
   end
