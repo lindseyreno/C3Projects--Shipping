@@ -25,6 +25,14 @@ class ApiController < ApplicationController
   end
 
   def log_shipping_choice
-    render json: {}, status: 201
+    shipping_choice = JSON.parse(params[:json_data])["shipping_choice"]
+    audit = Audit.new(shipping_choice)
+    if audit.save
+      render json: {}, status: 201
+    elsif audit.errors
+      render json: {}, status: 422
+    else
+      render json: {}, status: 400
+    end
   end
 end
