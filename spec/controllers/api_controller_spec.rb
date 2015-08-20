@@ -112,7 +112,23 @@ RSpec.describe ApiController, type: :controller do
       end
     end
   end
+
+  describe "POST #log_shipping_choice" do
+  let(:shipping_choice) {
+    "{\"shipping_choice\":{\"shipping_service\":\"UPS Ground\",\"shipping_cost\":1000,\"order_id\":1}}"
+  }
+    before :each do
+      VCR.use_cassette "controllers/api_controller/log_shipping_choice" do
+        post :log_shipping_choice, json_data: shipping_choice
+      end
+    end
+
+    it "is successful" do
+      expect(response.response_code).to eq 201
+    end
+  end
 end
 
 # Use the below code for creating test JSON for specs
 # {:shipment=> {:origin=>{:country=>"US", :state=>"WA", :city=>"Seattle", :zip=>98101}, :destination=>{:country=>"US", :state=>"CA", :city=>"San Leandro", :zip=>94578}, :packages=>[{:weight=>100, :dimensions=>[12, 12, 12]}]}}
+# {:shipping_choice=>{:shipping_service=>"UPS Ground", :shipping_cost=>1000, :order_id=>1}}
