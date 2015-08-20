@@ -136,7 +136,6 @@ RSpec.describe ApiController, type: :controller do
       end
 
       it "returns a JSON object of the new Audit record" do
-        binding.pry
         expect(@audit_record).to be_an_instance_of Hash
       end
     end
