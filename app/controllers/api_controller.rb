@@ -16,7 +16,8 @@ class ApiController < ApplicationController
   end
 
   def get_all_rates
-    shipment = JSON.parse(params[:q])["shipment"]
+    response = JSON.parse(params[:json_data])
+    shipment = response["shipment"]
     ups_rates = UpsInterface.new.process_rates(shipment)
     usps_rates = UspsInterface.new.process_rates(shipment)
     all_rates = ups_rates + usps_rates
