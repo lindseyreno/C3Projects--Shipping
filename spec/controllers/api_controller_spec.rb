@@ -114,17 +114,42 @@ RSpec.describe ApiController, type: :controller do
   end
 
   describe "POST #log_shipping_choice" do
-  let(:shipping_choice) {
-    "{\"shipping_choice\":{\"shipping_service\":\"UPS Ground\",\"shipping_cost\":1000,\"order_id\":1}}"
-  }
-    before :each do
-      VCR.use_cassette "controllers/api_controller/log_shipping_choice" do
-        post :log_shipping_choice, json_data: shipping_choice
+    context "valid shipping choice" do
+      let(:valid_shipping_choice) {
+        "{\"shipping_choice\":{\"shipping_service\":\"UPS Ground\",\"shipping_cost\":1000,\"order_id\":1}}"
+      }
+      before :each do
+        VCR.use_cassette "controllers/api_controller/valid_log_shipping_choice" do
+          post :log_shipping_choice, json_data: valid_shipping_choice
+        end
+      end
+
+      it "is successful" do
+        expect(response.response_code).to eq 201
+      end
+
+      it "returns JSON" do
+        expect(response.header['Content-Type']).to include 'application/json'
+      end
+
+      it "creates an audit log record" do
+        expect(Audit.count).to eq 1
       end
     end
 
-    it "is successful" do
-      expect(response.response_code).to eq 201
+    context "invalid shipping choice" do
+      let(:invalid_shipping_choice) {
+        "{\"shipping_choice\":{\"shipping_service\":\"UPS Ground\",\"shipping_cost\":null,\"order_id\":1}}"
+      }
+      before :each do
+        VCR.use_cassette "controllers/api_controller/invalid_log_shipping_choice" do
+          post :log_shipping_choice, json_data: invalid_shipping_choice
+        end
+      end
+
+      it "is responds with 422 Unprocessable Entity" do
+        expect(response.response_code).to eq 422
+      end
     end
   end
 end
