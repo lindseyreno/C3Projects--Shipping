@@ -23,4 +23,8 @@ class ApiController < ApplicationController
 
     render json: all_rates
   end
+
+  def log_shipping_choice
+    render json: {}, status: 201
+  end
 end
