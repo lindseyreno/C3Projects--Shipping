@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'support/vcr_setup'
-require 'ups_interface'
 
 RSpec.describe ApiController, type: :controller do
   let(:shipment) {
@@ -27,17 +26,21 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      it "returns only #{UpsInterface::DESIRED_UPS_RATES.count} rates" do
-        expect(@rates.count).to eq UpsInterface::DESIRED_UPS_RATES.count
+      it "returns only #{UpsInterface::DESIRED_SERVICES.count} rates" do
+        expect(@rates.count).to eq UpsInterface::DESIRED_SERVICES.count
       end
 
-      it "returns the #{UpsInterface::DESIRED_UPS_RATES.count} desired rates" do
+      it "returns the #{UpsInterface::DESIRED_SERVICES.count} desired rates" do
         service_names = @rates.collect{ |rate| rate["service_name"] }
-        expect(service_names).to eq UpsInterface::DESIRED_UPS_RATES
+        expect(service_names).to eq UpsInterface::DESIRED_SERVICES
       end
 
       it "returns rates in ascending order of price" do
         expect(@rates.first["total_price"]).to be <= @rates.last["total_price"]
+      end
+
+      it "includes service name, total price and delivery date" do
+        expect(@rates.first.keys).to eq ["service_name", "total_price", "delivery_date"]
       end
     end
   end
@@ -63,13 +66,13 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      it "returns only #{UspsInterface::DESIRED_USPS_RATES.count} rates" do
-        expect(@rates.count).to eq UspsInterface::DESIRED_USPS_RATES.count
+      it "returns only #{UspsInterface::DESIRED_SERVICES.count} rates" do
+        expect(@rates.count).to eq UspsInterface::DESIRED_SERVICES.count
       end
 
-      it "returns the #{UspsInterface::DESIRED_USPS_RATES.count} desired rates" do
+      it "returns the #{UspsInterface::DESIRED_SERVICES.count} desired rates" do
         service_names = @rates.collect{ |rate| rate["service_name"] }
-        expect(service_names).to eq UspsInterface::DESIRED_USPS_RATES
+        expect(service_names).to eq UspsInterface::DESIRED_SERVICES
       end
 
       it "returns rates in ascending order of price" do
@@ -102,7 +105,7 @@ RSpec.describe ApiController, type: :controller do
         expect(@rates).to be_an_instance_of Array
       end
 
-      all_rates = UpsInterface::DESIRED_UPS_RATES + UspsInterface::DESIRED_USPS_RATES
+      all_rates = UpsInterface::DESIRED_SERVICES + UspsInterface::DESIRED_SERVICES
       it "returns #{all_rates.count} rates" do
         api_call
         expect(@rates.count).to eq all_rates.count
