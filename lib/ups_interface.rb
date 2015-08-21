@@ -20,8 +20,12 @@ class UpsInterface
 
     return false unless packages && origin && destination
 
-    response = ups.find_rates(origin, destination, packages, {pickup_time: Date.current})
-    rates = response.rates
+    begin
+      response = ups.find_rates(origin, destination, packages, {pickup_time: Date.current})
+      rates = response.rates if response
+    rescue
+      return false
+    end
 
     ## return only the desired rates
     collected_rates = []
