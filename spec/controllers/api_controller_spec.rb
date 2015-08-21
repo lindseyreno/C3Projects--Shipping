@@ -117,28 +117,27 @@ RSpec.describe ApiController, type: :controller do
       end
     end
 
-    # context "invalid shipment details" do
-    #   let(:invalid_api_call) do
-    #     VCR.use_cassette "controllers/api_controller/get_all_rates_invalid" do
-    #       get :get_all_rates, json_data: invalid_shipment
-    #       @rates = JSON.parse response.body
-    #     end
-    #   end
-    #
-    #   it "responds with 422 Unprocessable Entity" do
-    #     invalid_api_call
-    #     expect(response.response_code).to eq 422
-    #   end
-    #
-    #   it "returns JSON" do
-    #     invalid_api_call
-    #     expect(response.header['Content-Type']).to include 'application/json'
-    #   end
-    #
-    #   it "returns an error message" do
-    #     expect(@error_message).to be_an_instance_of Hash
-    #   end
-    # end
+    context "invalid shipment details" do
+      let(:invalid_api_call) do
+        get :get_all_rates, json_data: invalid_shipment
+        @error_message = JSON.parse response.body
+      end
+    
+      it "responds with 422 Unprocessable Entity" do
+        invalid_api_call
+        expect(response.response_code).to eq 422
+      end
+    
+      it "returns JSON" do
+        invalid_api_call
+        expect(response.header['Content-Type']).to include 'application/json'
+      end
+    
+      it "returns an error message" do
+        invalid_api_call
+        expect(@error_message).to be_an_instance_of Hash
+      end
+    end
   end
 
   describe "POST #log_shipping_choice" do
