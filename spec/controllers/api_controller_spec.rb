@@ -10,7 +10,7 @@ RSpec.describe ApiController, type: :controller do
   }
   describe "GET #get_ups_rates" do
     before :each do
-      VCR.use_cassette "controllers/get_ups_rates" do
+      VCR.use_cassette "controllers/api_controller/get_ups_rates" do
         get :get_ups_rates, json_data: shipment
         @rates = JSON.parse response.body
       end
@@ -52,7 +52,7 @@ RSpec.describe ApiController, type: :controller do
 
   describe "GET #get_usps_rates" do
     before :each do
-      VCR.use_cassette "controllers/get_usps_rates" do
+      VCR.use_cassette "controllers/api_controller/get_usps_rates" do
         get :get_usps_rates, json_data: shipment
         @rates = JSON.parse response.body
       end
@@ -114,7 +114,7 @@ RSpec.describe ApiController, type: :controller do
         end
 
         all_rates = UpsInterface::DESIRED_SERVICES + UspsInterface::DESIRED_SERVICES
-        it "returns #{all_rates.count} rates" do
+        it "returns #{all_rates.count} or fewer rates" do
           valid_api_call
           expect(@rates.count).to be <= all_rates.count
         end
