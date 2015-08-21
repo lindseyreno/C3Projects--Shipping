@@ -15,8 +15,12 @@ class UspsInterface
 
      return false unless packages && origin && destination
 
-    response = usps.find_rates(origin, destination, packages)
-    rates = response.rates
+    begin
+      response = usps.find_rates(origin, destination, packages, {pickup_time: Date.current})
+      rates = response.rates if response
+    rescue
+      return false
+    end
 
     ## collect only the desired service rates
     collected_rates = []

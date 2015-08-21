@@ -10,6 +10,9 @@ class UpsInterface
       )
   end
 
+  # We would like to refactor this method,
+  # and combine it with UspsInterface.process_rates,
+  # but we ran out of time.
   def process_rates(shipment)
     packages = ShippingInterface.create_packages(shipment["packages"])
     origin = ShippingInterface.create_location(shipment["origin"])
@@ -17,8 +20,12 @@ class UpsInterface
 
     return false unless packages && origin && destination
 
-    response = ups.find_rates(origin, destination, packages, {pickup_time: Date.current})
-    rates = response.rates
+    begin
+      response = ups.find_rates(origin, destination, packages, {pickup_time: Date.current})
+      rates = response.rates if response
+    rescue
+      return false
+    end
 
     ## return only the desired rates
     collected_rates = []
