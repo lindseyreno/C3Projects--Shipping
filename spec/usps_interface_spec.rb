@@ -35,13 +35,29 @@ RSpec.describe UspsInterface do
       end
     end
 
-    context "invalid shipment" do
+    context "invalid shipment - no zip" do
       let(:invalid_shipment) do # nil zip
         {"origin"=>{"country"=>"US", "state"=>"WA", "city"=>"Seattle", "zip"=>nil}, "destination"=>{"country"=>"US", "state"=>"CA", "city"=>"San Leandro", "zip"=>94578}, "packages"=>[{"weight"=>100, "dimensions"=>[12, 12, 12]}]}
       end
 
       before :each do
         @rates = UspsInterface.new.process_rates(invalid_shipment)
+      end
+
+      it "returns false" do
+        expect(@rates).to eq false
+      end
+    end
+
+    context "invalid shipment - bad zip" do
+      let(:invalid_shipment) do
+        {"origin"=>{"country"=>"US", "state"=>"OR", "city"=>"Portland", "zip"=>97082}, "destination"=>{"country"=>"US", "state"=>"CA", "city"=>"San Leandro", "zip"=>94578}, "packages"=>[{"weight"=>100, "dimensions"=>[12, 12, 12]}]}
+      end
+
+      before :each do
+        VCR.use_cassette "lib/usps_interface/invalid_shipment_mismatch" do
+          @rates = UspsInterface.new.process_rates(invalid_shipment)
+        end
       end
 
       it "returns false" do
