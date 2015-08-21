@@ -41,9 +41,7 @@ RSpec.describe UpsInterface do
       end
 
       before :each do
-        VCR.use_cassette "lib/ups_interface/process_rates_invalid" do
-          @rates = UpsInterface.new.process_rates(invalid_shipment)
-        end
+        @rates = UpsInterface.new.process_rates(invalid_shipment)
       end
 
       it "returns false" do
