@@ -15,6 +15,8 @@ class UpsInterface
     origin = ShippingInterface.create_location(shipment["origin"])
     destination = ShippingInterface.create_location(shipment["destination"])
 
+    return false unless packages && origin && destination
+
     response = ups.find_rates(origin, destination, packages, {pickup_time: Date.current})
     rates = response.rates
 
