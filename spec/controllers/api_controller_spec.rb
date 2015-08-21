@@ -3,8 +3,11 @@ require 'support/vcr_setup'
 
 RSpec.describe ApiController, type: :controller do
   let(:shipment) {
-    "{\"shipment\":{\"origin\":{\"country\":\"US\",\"state\":\"WA\",\"city\":\"Seattle\",\"zip\":98101},\"destination\":{\"country\":\"US\",\"state\":\"CA\",\"city\":\"San Leandro\",\"zip\":94578},\"packages\":[{\"weight\":100,\"dimensions\":[12,12,12]}]}}" }
-
+    "{\"shipment\":{\"origin\":{\"country\":\"US\",\"state\":\"WA\",\"city\":\"Seattle\",\"zip\":98101},\"destination\":{\"country\":\"US\",\"state\":\"CA\",\"city\":\"San Leandro\",\"zip\":94578},\"packages\":[{\"weight\":100,\"dimensions\":[12,12,12]}]}}"
+  }
+  let(:invalid_shipment) {
+    "{\"shipment\":{\"origin\":{\"country\":\"US\",\"state\":null,\"city\":\"Seattle\",\"zip\":null},\"destination\":{\"country\":\"US\",\"state\":\"CA\",\"city\":\"San Leandro\",\"zip\":94578},\"packages\":[{\"weight\":100,\"dimensions\":[12,12,12]}]}}"
+  }
   describe "GET #get_ups_rates" do
     before :each do
       VCR.use_cassette "controllers/get_ups_rates" do
@@ -82,35 +85,60 @@ RSpec.describe ApiController, type: :controller do
   end
 
   describe "GET #get_all_rates" do
-    let(:api_call) do
-      VCR.use_cassette "controllers/get_all_rates" do
-        get :get_all_rates, json_data: shipment
-        @rates = JSON.parse response.body
+    context "valid shipment details" do
+      let(:valid_api_call) do
+        VCR.use_cassette "controllers/api_controller/get_all_rates_valid" do
+          get :get_all_rates, json_data: shipment
+          @rates = JSON.parse response.body
+        end
+      end
+
+      it "is successful" do
+        valid_api_call
+        expect(response.response_code).to eq 200
+      end
+
+      it "returns JSON" do
+        valid_api_call
+        expect(response.header['Content-Type']).to include 'application/json'
+      end
+
+      context "the returned JSON object" do
+        it "is an array" do
+          valid_api_call
+          expect(@rates).to be_an_instance_of Array
+        end
+
+        all_rates = UpsInterface::DESIRED_SERVICES + UspsInterface::DESIRED_SERVICES
+        it "returns #{all_rates.count} rates" do
+          valid_api_call
+          expect(@rates.count).to eq all_rates.count
+        end
       end
     end
 
-    it "is successful" do
-      api_call
-      expect(response.response_code).to eq 200
-    end
-
-    it "returns JSON" do
-      api_call
-      expect(response.header['Content-Type']).to include 'application/json'
-    end
-
-    context "the returned JSON object" do
-      it "is an array" do
-        api_call
-        expect(@rates).to be_an_instance_of Array
-      end
-
-      all_rates = UpsInterface::DESIRED_SERVICES + UspsInterface::DESIRED_SERVICES
-      it "returns #{all_rates.count} rates" do
-        api_call
-        expect(@rates.count).to eq all_rates.count
-      end
-    end
+    # context "invalid shipment details" do
+    #   let(:invalid_api_call) do
+    #     VCR.use_cassette "controllers/api_controller/get_all_rates_invalid" do
+    #       get :get_all_rates, json_data: invalid_shipment
+    #       @rates = JSON.parse response.body
+    #     end
+    #   end
+    #
+    #   it "responds with 422 Unprocessable Entity" do
+    #     invalid_api_call
+    #     expect(response.response_code).to eq 422
+    #   end
+    #
+    #   it "returns JSON" do
+    #     invalid_api_call
+    #     expect(response.header['Content-Type']).to include 'application/json'
+    #   end
+    #
+    #   it "returns an error message" do
+    #     expect(@error_message).to be_an_instance_of Hash
+    #   end
+    # end
   end
 
   describe "POST #log_shipping_choice" do
@@ -165,5 +193,9 @@ RSpec.describe ApiController, type: :controller do
 end
 
 # Use the below code for creating test JSON for specs
+# valid shipment
 # {:shipment=> {:origin=>{:country=>"US", :state=>"WA", :city=>"Seattle", :zip=>98101}, :destination=>{:country=>"US", :state=>"CA", :city=>"San Leandro", :zip=>94578}, :packages=>[{:weight=>100, :dimensions=>[12, 12, 12]}]}}
+# invalid shipment
+# {:origin=>{:country=>"US", :state=>nil, :city=>"Seattle", :zip=>nil}, :destination=>{:country=>"US", :state=>"CA", :city=>"San Leandro", :zip=>94578}, :packages=>[{:weight=>100, :dimensions=>[12, 12, 12]}]}}
+# valid shipping choice
 # {:shipping_choice=>{:shipping_service=>"UPS Ground", :shipping_cost=>1000, :order_id=>1}}

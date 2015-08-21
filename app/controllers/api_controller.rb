@@ -1,8 +1,8 @@
 class ApiController < ApplicationController
-  BAD_PARAM_ERROR_MESSAGE = { error_details: 
-        %Q{The shipping choice is missing a parameter 
+  BAD_PARAM_ERROR_MESSAGE = { error_details:
+        %Q{The shipping choice is missing a parameter
         or a parameter is in the wrong format:
-        shipping_service(string), 
+        shipping_service(string),
         shipping_cost(integer),
         and order_id(integer).} }
 
@@ -27,8 +27,11 @@ class ApiController < ApplicationController
     ups_rates = UpsInterface.new.process_rates(shipment)
     usps_rates = UspsInterface.new.process_rates(shipment)
     all_rates = ups_rates + usps_rates
-
-    render json: all_rates
+    # if
+      render json: all_rates, status: 200
+    # elsif
+      # render json: BAD_PARAM_ERROR_MESSAGE, status: 422
+    # end
   end
 
   def log_shipping_choice
