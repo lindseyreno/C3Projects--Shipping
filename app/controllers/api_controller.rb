@@ -1,7 +1,7 @@
 class ApiController < ApplicationController
   BAD_PARAM_ERROR_MESSAGE = { error_details:
-        %Q{The shipping choice is missing a parameter
-        or a parameter is in the wrong format.} }
+    %Q{The shipping choice is missing a parameter
+    or a parameter is in the wrong format.} }
 
   def get_ups_rates
     ups = UpsInterface.new
