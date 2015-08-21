@@ -30,12 +30,14 @@ RSpec.describe ApiController, type: :controller do
       end
 
       it "returns only #{UpsInterface::DESIRED_SERVICES.count} rates" do
-        expect(@rates.count).to eq UpsInterface::DESIRED_SERVICES.count
+        expect(@rates.count).to be <= UpsInterface::DESIRED_SERVICES.count
       end
 
-      it "returns the #{UpsInterface::DESIRED_SERVICES.count} desired rates" do
+      it "returns the desired services" do
         service_names = @rates.collect{ |rate| rate["service_name"] }
-        expect(service_names).to eq UpsInterface::DESIRED_SERVICES
+        service_names.each do |service|
+          expect(UpsInterface::DESIRED_SERVICES).to include service
+        end
       end
 
       it "returns rates in ascending order of price" do
@@ -70,12 +72,14 @@ RSpec.describe ApiController, type: :controller do
       end
 
       it "returns only #{UspsInterface::DESIRED_SERVICES.count} rates" do
-        expect(@rates.count).to eq UspsInterface::DESIRED_SERVICES.count
+        expect(@rates.count).to be <= UspsInterface::DESIRED_SERVICES.count
       end
 
-      it "returns the #{UspsInterface::DESIRED_SERVICES.count} desired rates" do
+      it "returns the desired services" do
         service_names = @rates.collect{ |rate| rate["service_name"] }
-        expect(service_names).to eq UspsInterface::DESIRED_SERVICES
+        service_names.each do |service|
+          expect(UspsInterface::DESIRED_SERVICES).to include service
+        end
       end
 
       it "returns rates in ascending order of price" do
@@ -112,7 +116,7 @@ RSpec.describe ApiController, type: :controller do
         all_rates = UpsInterface::DESIRED_SERVICES + UspsInterface::DESIRED_SERVICES
         it "returns #{all_rates.count} rates" do
           valid_api_call
-          expect(@rates.count).to eq all_rates.count
+          expect(@rates.count).to be <= all_rates.count
         end
       end
     end
