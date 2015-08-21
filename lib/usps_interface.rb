@@ -9,28 +9,11 @@ class UspsInterface
   end
 
   def process_rates(shipment)
-    raw_packages = shipment["packages"]
+    packages = ShippingInterface.create_packages(shipment["packages"])
+    origin = ShippingInterface.create_location(shipment["origin"])
+    destination = ShippingInterface.create_location(shipment["destination"])
 
-    packages = []
-    raw_packages.each do |package|
-      new_package = ActiveShipping::Package.new(
-        package["weight"], package["dimensions"])
-      packages << new_package
-    end
-
-    origin = ActiveShipping::Location.new(
-      country: shipment["origin"]["country"],
-      state: shipment["origin"]["state"],
-      city: shipment["origin"]["city"],
-      zip: shipment["origin"]["zip"]
-      )
-
-    destination = ActiveShipping::Location.new(
-      country: shipment["origin"]["country"],
-      state: shipment["origin"]["state"],
-      city: shipment["origin"]["city"],
-      zip: shipment["origin"]["zip"]
-      )
+     return false unless packages && origin && destination
 
     response = usps.find_rates(origin, destination, packages)
     rates = response.rates
